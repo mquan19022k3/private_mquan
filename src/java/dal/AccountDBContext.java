@@ -16,25 +16,44 @@ import java.util.logging.Logger;
  * @author admin
  */
 public class AccountDBContext extends DBContext{
-    public Users getUserById(String id) {
-        try {
-            String sqlString = " select * from users where id=? ";
+    // public Users getUserById(String id) {
+    //     try {
+    //         String sqlString = " select * from users where id=? ";
             
-            PreparedStatement stm = connection.prepareStatement(sqlString);
-            stm.setString(1, id);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {                
+    //         PreparedStatement stm = connection.prepareStatement(sqlString);
+    //         stm.setString(1, id);
+    //         ResultSet rs = stm.executeQuery();
+    //         while (rs.next()) {                
+    //             Users u = new Users();
+    //             u.setId(rs.getString(1));
+    //             u.setAccount(rs.getString(2));
+    //             u.setPass(rs.getString(3));
+    //             u.setName(rs.getString(4));
+    //             u.setEmail(rs.getString(5));  
+    //             return u;
+    //         }
+    //     } catch (SQLException ex) {
+    //         Logger.getLogger(Users.class.getName()).log(Level.SEVERE, null, ex);
+    //     }
+    //     return null;
+    // }
+    public Users getUserById(String id) {
+    try (PreparedStatement stm = connection.prepareStatement("SELECT * FROM users WHERE id = ?")) {
+        stm.setString(1, id);
+        try (ResultSet rs = stm.executeQuery()) {
+            while (rs.next()) {
                 Users u = new Users();
                 u.setId(rs.getString(1));
                 u.setAccount(rs.getString(2));
                 u.setPass(rs.getString(3));
                 u.setName(rs.getString(4));
-                u.setEmail(rs.getString(5));  
+                u.setEmail(rs.getString(5));
                 return u;
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(Users.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+    } catch (SQLException ex) {
+        Logger.getLogger(AccountDBContext.class.getName()).log(Level.SEVERE, null, ex);
     }
+    return null;
+}
 }
